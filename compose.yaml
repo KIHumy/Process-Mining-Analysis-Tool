@@ -1,0 +1,27 @@
+services:
+  cliandanalyzer:
+    build: ../PMATSystem
+    volumes:
+      - ./dockerNetworkDirectory:/dockerNetworkDirectory
+    ports:
+      - 60321:8000
+
+  dpimasdockerservice:
+    build: ../DPIM-as-docker-service
+    volumes:
+      - ./dockerNetworkDirectory/workerFiles/DPIM:/DPIM
+
+  exttlkcasdockerservice:
+    build: ../extTLKC-as-docker-service
+    volumes:
+      - ./dockerNetworkDirectory/workerFiles/extTLKC:/extTLKC
+
+  pretsaasdockerservice:
+    build: ../PRETSA-as-docker-service
+    volumes:
+      - ./dockerNetworkDirectory/workerFiles/PRETSA:/PRETSA
+
+  sacofaasdockerservice:
+    build: ../SaCoFa-as-docker-service
+    volumes:
+      - ./dockerNetworkDirectory/workerFiles/SaCoFa:/SaCoFa
