@@ -45,19 +45,23 @@ def main():
         if instruction == "startNTest":
             print("Starting network test for the docker network.")
             serverNTRequestAnswer = requests.post("http://localhost:60321/instruction", json= {"instruction":"start_n_test"})
-            print(serverNTRequestAnswer.json())
-            ongoing = True
-            while ongoing == True:
-                time.sleep(5)
-                answer = requests.post("http://localhost:60321/client/result/status", json= {"task":"network_test"})
-                if answer.json() == {"status":"finished"}:
-                    print("N test was successfull.")
-                    ongoing = False
-                elif answer.json() == {"status":"no_connected_workers"}:
-                    print("No connected workers.")
-                    ongoing = False
-                else:
-                    print(answer.json())
+            jsonAnswer = serverNTRequestAnswer.json()
+            print(jsonAnswer)
+            if "taskId" in jsonAnswer:
+                ongoing = True
+                while ongoing == True:
+                    time.sleep(5)
+                    answer = requests.post("http://localhost:60321/client/result/status", json= {"task":"network_test", "instructionId":jsonAnswer.get("taskId")})
+                    if answer.json() == {"status":"finished"}:
+                        print("N test was successfull.")
+                        ongoing = False
+                    elif answer.json() == {"status":"no_connected_workers"}:
+                        print("No connected workers.")
+                        ongoing = False
+                    else:
+                        print(answer.json())
+            else:
+                print("N test failed to work.")
 
         if instruction == "returnSystemRequirements":
             print("Requesting system requirements.")
