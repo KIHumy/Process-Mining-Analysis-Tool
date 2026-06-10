@@ -8,20 +8,32 @@ services:
 
   dpimasdockerservice:
     build: ../DPIM-as-docker-service
+    deploy:
+      mode: replicated
+      replicas: 5
     volumes:
       - ./dockerNetworkDirectory/workerFiles/DPIM:/DPIM
 
   exttlkcasdockerservice:
     build: ../extTLKC-as-docker-service
+    deploy:
+      mode: replicated
+      replicas: 5
     volumes:
       - ./dockerNetworkDirectory/workerFiles/extTLKC:/extTLKC
 
   pretsaasdockerservice:
     build: ../PRETSA-as-docker-service
+    deploy:
+      mode: replicated
+      replicas: 5
     volumes:
       - ./dockerNetworkDirectory/workerFiles/PRETSA:/PRETSA
 
   sacofaasdockerservice:
     build: ../SaCoFa-as-docker-service
+    deploy:
+      mode: replicated
+      replicas: 5
     volumes:
       - ./dockerNetworkDirectory/workerFiles/SaCoFa:/SaCoFa

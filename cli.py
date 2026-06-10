@@ -70,7 +70,7 @@ def main():
             openFile= open("netRequirements/netRequirements.json", "w")
             json.dump(requirements.json(), openFile, indent=3)
 
-        if instruction == "uploadTask":
+        if instruction == "uploadTask" or instruction == "uploadAutoTask":
             print("Please provide a valid file name excluding the data type that exists in the netTasks directory. \n For example if you want to upload task1.json type task1.")
             taskFile = input()
             taskFilePath = pathlib.Path("netTasks/" + taskFile + ".json")
@@ -80,7 +80,10 @@ def main():
                 openFile= open(taskFilePath, "r")
                 jsonTaskInstructions = json.load(openFile)
                 try:
-                    messageStat = requests.post("http://localhost:60321/system/task/", json=jsonTaskInstructions)
+                    if instruction == "uploadTask":
+                        messageStat = requests.post("http://localhost:60321/system/task/", json=jsonTaskInstructions)
+                    else:
+                        messageStat = requests.post("http://localhost:60321/system/autotask/", json=jsonTaskInstructions)
                     messageStat.raise_for_status()
                     print("Upload was successful.")
                 except:
@@ -94,9 +97,16 @@ def main():
             print("Requesting template from API server.")
             receivedTemplate = requests.post("http://localhost:60321/instruction", json= {"instruction":"send_template_for_workers"})
             print(receivedTemplate)
-            print(json.dumps(receivedTemplate.json(), indent=3))
-            openFile= open("netTasks/networkTaskTemplate.json", "w")
-            json.dump(receivedTemplate.json(), openFile, indent=3)
+            #print(json.dumps(receivedTemplate.json(), indent=3))
+            with open("netTasks/networkTaskTemplate.json", "w") as openFile:
+                json.dump(receivedTemplate.json(), openFile, indent=3)
+
+        if instruction == "getComparisonTemplateForAutoComparison":
+            print("Requesting auto template from server.")
+            receivedAutoTemplate = requests.post("http://localhost:60321/instruction", json= {"instruction":"send_auto_template_for_workers"})
+            print(receivedAutoTemplate)
+            with open("netTasks/autoTaskTemplate.json", "w") as openAutoFile:
+                json.dump(receivedAutoTemplate.json(), openAutoFile, indent=3)
                 
 if __name__ == "__main__":
     main()
