@@ -1,0 +1,3 @@
+dockerNetworkDirectory/output/*
+!dockerNetworkDirectory/output/
+!dockerNetworkDirectory/output/README.md

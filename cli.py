@@ -34,6 +34,19 @@ def main():
             subprocess.run(["docker", "compose", "down"])
             return
         
+        if instruction == "convert":
+            print("Please enter the file you want to convert for example: example.xes or .csv")
+            fileNameForConversion = input()
+            fileList = fileNameForConversion.rsplit(".", 1)
+            if len(fileList) < 2:
+                print("Conversion failed invalid file name.")
+            else:
+                if fileList[1] != "xes" and fileList[1] != "csv":
+                    print("File is of unsuported type.")
+                else:
+                    print("Begin converting file...")
+                    requests.post("http://localhost:60321/converter", json= {"instruction": "convert", "file": fileNameForConversion})
+
         if instruction == "comparison":
             userContinue = "yes"
             while userContinue == "yes":
@@ -51,6 +64,7 @@ def main():
                 ongoing = True
                 while ongoing == True:
                     time.sleep(5)
+                    print(f"This is the Id used by the client: {jsonAnswer.get("taskId")}")
                     answer = requests.post("http://localhost:60321/client/result/status", json= {"task":"network_test", "instructionId":jsonAnswer.get("taskId")})
                     if answer.json() == {"status":"finished"}:
                         print("N test was successfull.")
@@ -107,6 +121,21 @@ def main():
             print(receivedAutoTemplate)
             with open("netTasks/autoTaskTemplate.json", "w") as openAutoFile:
                 json.dump(receivedAutoTemplate.json(), openAutoFile, indent=3)
+
+        if instruction == "setNewGlobalTimeout":
+            print("Please enter the new timeout value. The timeout value is a float type.")
+            protoTimeout = input()
+            try:
+                timeout = float(protoTimeout)
+            except:
+                print("The input could not be converted into a float.")
+            else:
+                print("Set new global timeout.")
+                answerForTimeout = requests.post("http://localhost:60321/setGlobalTimeout", json= {"timeout": timeout})
+                if answerForTimeout.status_code != 200:
+                    print(f"The timeout could not be set there was a failure: {answerForTimeout.text} with status code: {answerForTimeout.status_code}")
+                else:
+                    print(f"The timeout was set. The new timeout is: {timeout} minutes")
                 
 if __name__ == "__main__":
     main()
