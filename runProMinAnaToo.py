@@ -1,4 +1,5 @@
 import subprocess
+import sys
 
 subprocess.run(["docker", "compose", "up", "-d"])
-subprocess.run(["python", "cli.py"])
+subprocess.run([sys.executable, "cli.py"])
